@@ -114,9 +114,10 @@ for i in range (1, maximum):
 for i in range(0,maximum):
     print(str (i) + " "+ str(cumulative[i]))
     
-    
-    
 
+print("Task 1.2 - Image vector in tag space")
+for image in imageSpace:
+    print (image)
 
 
 
