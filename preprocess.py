@@ -74,8 +74,8 @@ for image in images:
 
 def similarity (v1 , v2):
     sim = 0
-    for i in range (1, numberOfTags):
-        sim += v1[i] * v2[i]
+    for i in range (0, numberOfTags):
+        sim += imageSpace[v1][i] * imageSpace[v2][i]
     
     return sim
 
@@ -118,6 +118,19 @@ for i in range(0,maximum):
 print("Task 1.2 - Image vector in tag space")
 for image in imageSpace:
     print (image)
+
+
+def similarityCount (threshold):
+    count = 0
+    for i in range (0, numberOfImages):
+        for z in range (0, numberOfImages):
+            print(str(i))
+            if similarity (i,z) >= threshold:
+                count += 1
+    return count
+
+
+print (similarityCount (0.5))
 
 
 
