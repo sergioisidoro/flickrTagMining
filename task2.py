@@ -18,7 +18,7 @@ class Tag:
         self.order = tagOrder
         
 
-with open('dataset_small.txt', 'r') as content_file:
+with open('med_dataset.txt', 'r') as content_file:
         images = [line.strip().split(" ") for line in content_file]
         
 
@@ -35,7 +35,7 @@ for image in images:
             tagDictionary[tag] = Tag(tagcounter)
             tagcounter +=1
             
-            
+#print("1")          
 #DEBUG
 #print(tagDictionary)
 
@@ -51,12 +51,17 @@ for tag in tagDictionary:
 #DEBUG
 #print(numberOfTags)
 
-
+#print("2")
+          
 imageSpace = [];
+optimizedImageSpace =[]
 for image in images:
-
-    vector = listofzeros = [0] * numberOfTags
     
+    vector = listofzeros = [0] * numberOfTags
+    newVector = []
+    pointer = len(optimizedImageSpace)
+    optimizedImageSpace.append(newVector)
+
     norm = 0 
     for tag in image:
        norm += math.pow(tagDictionary[tag].weight,2)
@@ -64,32 +69,52 @@ for image in images:
     norm = math.sqrt(norm)
     
     for tag in image:
-        vector [tagDictionary[tag].order] = tagDictionary[tag].weight / norm
+        order=tagDictionary[tag].order
+        vector [order] = tagDictionary[tag].weight / norm
+        if not vector[order] == 0:
+             optimizedImageSpace[pointer].append(order) 
         
     imageSpace.append(vector)    
 
 #DEBUG
 #print(imageSpace)
+#print(optimizedImageSpace)
 
-
-def similarity (v1 , v2):
+#print("3")          
+def similarity (i , z):
     sim = 0
-    for i in range (0, numberOfTags):
-        sim += imageSpace[v1][i] * imageSpace[v2][i]
+    
+    for j in optimizedImageSpace[i]:
+        sim += imageSpace[i][j] * imageSpace[z][j]
+        
+    #for i in range (0, numberOfTags):
+    #    sim += imageSpace[v1][i] * imageSpace[v2][i]
     
     return sim
 
+
+def commonTags  (i, z):
+    
+    for j in optimizedImageSpace[i]:
+        if not imageSpace[z][j] == 0:
+            return True 
+    return False        
 
 
 def similarityCount (threshold):
     count = 0
     for i in range (0, numberOfImages):
+        
         for z in range (0, numberOfImages):
-            print(str(i))
-            if similarity (i,z) >= threshold:
-                count += 1
+            #if z % 1000 == 0:
+            #    print(str(i) + " " + str(z))
+                
+            if(commonTags(i,z)):
+            
+                if similarity (i,z) >= threshold:
+                    count += 1
     return count
 
 
-print (similarityCount (0.5))
 
+print (similarityCount (0.5))
