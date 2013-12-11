@@ -18,7 +18,7 @@ class Tag:
         self.order = tagOrder
         
 
-with open('dataset_small.txt', 'r') as content_file:
+with open('pics_tags.txt', 'r') as content_file:
         images = [line.strip().split(" ") for line in content_file]
         
 
@@ -34,7 +34,6 @@ for image in images:
         else:
             tagDictionary[tag] = Tag(tagcounter)
             tagcounter +=1
-            
             
 #DEBUG
 #print(tagDictionary)
@@ -71,18 +70,25 @@ for image in images:
 #DEBUG
 #print(imageSpace)
 
+######################   ###   ################################
 
-print ("Task 1.1 - Number of photos for each tag")
+#Task 1.1 - Number of photos for each tag
 
+f = open('photos_for_each_tag.txt', 'w')
 
 maximum = 0
 for tag in tagDictionary:
      maximum = max(maximum, tagDictionary[tag].count )
-     print(str(tagDictionary[tag].order) + " " + str(tagDictionary[tag].count))
+     f.write(str(tagDictionary[tag].order) + ";" + str(tagDictionary[tag].count) + "\n")
 
 maximum +=1 
 
-print("Task 1.1 - Number of tags that appear in X photos")
+f.close()
+##############################   ###   ################################
+
+# Task 1.1 - Number of tags that appear in X photos")
+
+f = open('tags_in_each_photo.csv', 'w')
 
 tagDistribution =[0]* (maximum)
 
@@ -91,9 +97,13 @@ for tag in tagDictionary:
 
 
 for i in range(0,maximum):
-    print(str(tagDistribution[i]) + " " + str (i))
-    
-print("Task 1.1 - Cumulative distribution")
+    f.write(str(tagDistribution[i]) + "," + str (i) +"\n")
+
+######################   ###   ################################
+
+## Task 1.1 - Cumulative distribution"
+
+f = open('cumulative_distribution.csv', 'w')
 
 cumulative= [0] * (maximum)
 cumulative[0] = tagDistribution[0]
@@ -102,9 +112,12 @@ for i in range (1, maximum):
     cumulative[i] = cumulative[i-1] + tagDistribution[i]
 
 for i in range(0,maximum):
-    print(str (i) + " "+ str(cumulative[i]))
-    
+    f.write(str (i) + "," + str(cumulative[i]) + "\n")
 
-print("Task 1.2 - Image vector in tag space")
-for image in imageSpace:
-    print (image)
+f.close()
+######################   ###   ################################
+
+# Task 1.2 - Image vector in tag space
+
+#for image in imageSpace:
+#    print (image)
