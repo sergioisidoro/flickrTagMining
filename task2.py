@@ -22,7 +22,7 @@ class Tag:
 
 timeOpen = time.clock()
 
-with open('dataset_small.txt', 'r') as content_file:
+with open('pics_tags.txt', 'r') as content_file:
         images = [line.strip().split(" ") for line in content_file]
         
 
@@ -36,8 +36,7 @@ tagDictionary = {}
 tagcounter = 0    
 for image in images:
     for tag in image:
-        
-        if tag in tagDictionary.keys():
+        if tag in tagDictionary:
             tagDictionary[tag].increment()
         else:
             tagDictionary[tag]=Tag(tagcounter)
@@ -49,7 +48,7 @@ print ("Dictionary time :" + str(timeDictionary- timeClose))
 
 #print("1")          
 #DEBUG
-print(len(tagDictionary))
+#print(len(tagDictionary))
 
 numberOfTags = len(tagDictionary)
 print("The problem has + " + str(numberOfImages) + " images and " + str(numberOfTags) + " tags")
@@ -75,7 +74,7 @@ maskSpace = []
 
 for image in images:
     
-    vector = listofzeros = [0] * numberOfTags
+    vector = {}
     newVector = []
     pointer = len(optimizedImageSpace)
     maskSpace.append(0b0)
@@ -95,7 +94,6 @@ for image in images:
              a = 0b1
              a = a << order
              maskSpace[pointer] = maskSpace[pointer] | a
-        
     imageSpace.append(vector)    
 
 timeNormalize = time.clock()  
@@ -108,8 +106,10 @@ print ("Normalizing time :" + str(timeNormalize - timeWeight))
 def similarity (i , z, threshold):
     sim = 0
     for j in optimizedImageSpace[i]:
-        sim += imageSpace[i][j] * imageSpace[z][j]
-        
+        if j in imageSpace[z]:
+            sim += imageSpace[i][j] * imageSpace[z][j]
+            if(sim >= threshold):
+                return sim
     #for i in range (0, numberOfTags):
     #    sim += imageSpace[v1][i] * imageSpace[v2][i]
     return sim
@@ -128,20 +128,42 @@ def similarityCount (threshold):
     count = 0
     for i in range (0, numberOfImages):
         for z in range (0, i):
-            #if z % 1000 == 0:
-            #    print(str(i) + " " + str(z))
-                
             if(commonTags(i,z)):
-            
                 if similarity (i,z, threshold) >= threshold:
                     count += 1
     return count
 
+
+fTime = open('time.csv', 'w')
+fResult = open('results.csv', 'w')
+
+
 timeSimilarity1 = time.clock()  
-print("Result:")
-print (similarityCount (0.5))
+a = similarityCount(0.5)
 timeSimilarity = time.clock()
-print ("Similiarity time for: " + str(timeSimilarity - timeSimilarity1))
+    
+print ("Similiarity time for:" + str(timeSimilarity - timeSimilarity1))
+
+
+
+#t = 0.01
+#print (t)
+#while t < 1:
+#    timeSimilarity1 = time.clock()  
+#    a = similarityCount(t)
+#    timeSimilarity = time.clock()
+#    
+#    print ("Similiarity time for " + str(t) + " :" + str(timeSimilarity - timeSimilarity1))
+#    fTime.write(str(t) + "," + str(timeSimilarity - timeSimilarity1) + "\n")
+#    fResult.write(str(t) + "," + str(a) + "\n")
+#    
+#    t = t + 0.01
+#
+#fTime.close()
+#fResult.close()
+
+
+
 
 #i = 1
 #while not i <= 0:

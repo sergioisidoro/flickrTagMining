@@ -29,7 +29,7 @@ tagDictionary = {}
 tagcounter = 0    
 for image in images:
     for tag in image:
-        if tag in tagDictionary.keys():
+        if tag in tagDictionary:
             tagDictionary[tag].increment()
         else:
             tagDictionary[tag] = Tag(tagcounter)
@@ -54,8 +54,7 @@ for tag in tagDictionary:
 imageSpace = [];
 for image in images:
 
-    vector = listofzeros = [0] * numberOfTags
-    
+    vector {}
     norm = 0 
     for tag in image:
        norm += math.pow(tagDictionary[tag].weight,2)
