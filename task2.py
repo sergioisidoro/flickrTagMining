@@ -108,34 +108,36 @@ def similarity (i , z, threshold):
     for j in optimizedImageSpace[i]:
         if j in imageSpace[z]:
             sim += imageSpace[i][j] * imageSpace[z][j]
-            if(sim >= threshold):
-                return sim
-    #for i in range (0, numberOfTags):
-    #    sim += imageSpace[v1][i] * imageSpace[v2][i]
+            # Abort computation as soon as possible  #Worse results...
+            #if(sim >= threshold):
+            #    return sim
+
     return sim
 
 
 def commonTags  (i, z):
-    return (maskSpace[i] & maskSpace[z])
     
-    #for j in optimizedImageSpace[i]:
-    #    if not imageSpace[z][j] == 0:
-    #        return True 
-    #return False        
+    #return (maskSpace[i] & maskSpace[z])
+    
+    for j in optimizedImageSpace[i]:
+        if j in imageSpace[z]:   #O(1)
+            return True 
+    return False        
 
 
 def similarityCount (threshold):
     count = 0
     for i in range (0, numberOfImages):
+        print(i)
         for z in range (0, i):
-            if(commonTags(i,z)):
+            if(commonTags(i,z)):   
                 if similarity (i,z, threshold) >= threshold:
                     count += 1
     return count
 
 
-fTime = open('time.csv', 'w')
-fResult = open('results.csv', 'w')
+#fTime = open('time.csv', 'w')
+#fResult = open('results.csv', 'w')
 
 
 timeSimilarity1 = time.clock()  
