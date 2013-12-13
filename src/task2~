@@ -3,7 +3,7 @@
 
 import math
 import time
-
+import sys
 
 class Tag:
     count = 1
@@ -22,13 +22,13 @@ class Tag:
 
 timeOpen = time.clock()
 
-with open('10000.txt', 'r') as content_file:
+with open(sys.argv[2], 'r') as content_file:
         images = [line.strip().split(" ") for line in content_file]
         
 
 timeClose = time.clock()
 
-print ("Reading file time:" + str(timeClose - timeOpen))
+#print ("Reading file time:" + str(timeClose - timeOpen))
 
 numberOfImages = len(images);
 tagDictionary = {}
@@ -44,14 +44,14 @@ for image in images:
           
           
 timeDictionary = time.clock() 
-print ("Dictionary time :" + str(timeDictionary- timeClose)) 
+#print ("Dictionary time :" + str(timeDictionary- timeClose)) 
 
 #print("1")          
 #DEBUG
 #print(len(tagDictionary))
 
 numberOfTags = len(tagDictionary)
-print("The problem has + " + str(numberOfImages) + " images and " + str(numberOfTags) + " tags")
+#print("The problem has + " + str(numberOfImages) + " images and " + str(numberOfTags) + " tags")
 
 for tag in tagDictionary:
     tagDictionary[tag].setWeight(math.log(numberOfImages) - math.log(tagDictionary[tag].count))
@@ -61,7 +61,7 @@ for tag in tagDictionary:
     #print (tagDictionary[tag].weight)
 
 timeWeight = time.clock()  
-print ("Weight time :" + str(timeWeight - timeDictionary)) 
+#print ("Weight time :" + str(timeWeight - timeDictionary)) 
 
 #DEBUG
 #print(numberOfTags)
@@ -110,33 +110,32 @@ for image in images:
     imageSpace.append(vector)    
 
 timeNormalize = time.clock()  
-print ("Normalizing time :" + str(timeNormalize - timeWeight)) 
+#print ("Normalizing time :" + str(timeNormalize - timeWeight)) 
 
 #DEBUG
 #print(imageSpace)
 #print(optimizedImageSpace)
 
 #print("3")          
-def similarity (i , z, threshold, accuracy):
+def similarity (i , z, threshold):
     sim = 0
-    size = len(optimizedImageSpace[i])
-    count = 0
+    
     for j in optimizedImageSpace[i]:
+        count = 1
         if j in imageSpace[z]:
             a = imageSpace[i][j] * imageSpace[z][j]
             sim += a
+            
             #List is ordered. At max, the total similarity will be length of the smaller list times the current value a
-            if (sim  + (a * len(optimizedImageSpace[i])-count))  < threshold:
-                return False
+            #if (sim  + (a * len(optimizedImageSpace[i])-count)) < threshold:
+            #    return False
           
-            # Abort computation as soon as possible  #Worse results...
+            # Abort computation as soon as possible 
             if(sim >= threshold):
                 return True
             
         count +=1 
-    
-        if count/size > size :
-            return (sim >= threshold * accuracy)
+    return (sim >= threshold)
 
 
 def commonTags  (i, z):
@@ -149,22 +148,22 @@ def commonTags  (i, z):
     return False        
 
 
-def similarityCount (threshold, accu):
+def similarityCount (threshold):
     count = 0
     for i in range (0, numberOfImages):
         #print (i)
         for z in range (0, i):
             #if(commonTags(i,z)):  
-            if similarity (i,z, threshold, accu):
+            if similarity (i,z, threshold):
                 count += 1
     return count
 
 
 timeSimilarity1 = time.clock()  
-a = similarityCount(0.5, 0.5)
+a = similarityCount(0.5)
 timeSimilarity = time.clock()
 print(a)
-print ("Similiarity time for:" + str(timeSimilarity - timeSimilarity1))
+#print ("Similiarity time for:" + str(timeSimilarity - timeSimilarity1))
 
 
 #fTime = open('time.csv', 'w')

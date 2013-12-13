@@ -3,7 +3,7 @@
 
 import math
 import time
-
+import sys
 
 class Tag:
     count = 1
@@ -22,7 +22,7 @@ class Tag:
 
 timeOpen = time.clock()
 
-with open('10000.txt', 'r') as content_file:
+with open(sys.argv[2], 'r') as content_file:
         images = [line.strip().split(" ") for line in content_file]
         
 
@@ -117,58 +117,58 @@ print ("Normalizing time :" + str(timeNormalize - timeWeight))
 #print(optimizedImageSpace)
 
 #print("3")          
-def similarity (i , z, threshold, accuracy):
+def similarity (i , z, threshold):
     sim = 0
-    size = len(optimizedImageSpace[i])
-    count = 0
+
+    mini = min(len(optimizedImageSpace[i]), len(optimizedImageSpace[z]))
+    
+    if optimizedImageSpace[i][0] * optimizedImageSpace[z][0] < threshold:
+        return False
+    
     for j in optimizedImageSpace[i]:
         if j in imageSpace[z]:
-            a = imageSpace[i][j] * imageSpace[z][j]
-            sim += a
-            #List is ordered. At max, the total similarity will be length of the smaller list times the current value a
-            if (sim  + (a * len(optimizedImageSpace[i])-count))  < threshold:
-                return False
-          
-            # Abort computation as soon as possible  #Worse results...
-            if(sim >= threshold):
-                return True
             
-        count +=1 
-    
-        if count/size > size :
-            return (sim >= threshold * accuracy)
+            sim += imageSpace[i][j] * imageSpace[z][j]
+            
+            if sim >= threshold:
+                return True
+            # Abort computation as soon as possible  #Worse results...
+            #if(sim >= threshold):
+            #    return sim
+    return sim >= threshold
 
 
 def commonTags  (i, z):
     
-    #return (maskSpace[i] & maskSpace[z])
-    count = 0
-    for j in optimizedImageSpace[i]:
-        if j in imageSpace[z]:   #O(1)
-            return True
-    return False        
+    return (maskSpace[i] & maskSpace[z])
+    
+    #for j in optimizedImageSpace[i]:
+    #    if j in imageSpace[z]:   #O(1)
+    #        return True 
+    #return False        
 
 
-def similarityCount (threshold, accu):
+def similarityCount (threshold):
     count = 0
     for i in range (0, numberOfImages):
-        #print (i)
         for z in range (0, i):
-            #if(commonTags(i,z)):  
-            if similarity (i,z, threshold, accu):
-                count += 1
+            if(commonTags(i,z)):  
+                if similarity (i,z, threshold):
+                    count += 1
     return count
 
 
+#fTime = open('time.csv', 'w')
+#fResult = open('results.csv', 'w')
+
+
 timeSimilarity1 = time.clock()  
-a = similarityCount(0.5, 0.5)
+a = similarityCount(sys.argv[1])
 timeSimilarity = time.clock()
 print(a)
 print ("Similiarity time for:" + str(timeSimilarity - timeSimilarity1))
 
 
-#fTime = open('time.csv', 'w')
-#fResult = open('results.csv', 'w')
 
 #t = 0.01
 #print (t)

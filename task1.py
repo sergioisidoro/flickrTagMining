@@ -54,7 +54,7 @@ for tag in tagDictionary:
 imageSpace = [];
 for image in images:
 
-    vector {}
+    vector = {}
     norm = 0 
     for tag in image:
        norm += math.pow(tagDictionary[tag].weight,2)
